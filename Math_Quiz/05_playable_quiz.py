@@ -166,9 +166,8 @@ class Quiz:
             num1 = random.randint(50, 500)
             num2 = random.randint(50, 500)
 
-    
-            print(num1, op, num2)
-            self.question_box.config(text="{} {} {}".format(num1, op, num2))
+        self.question_box.config(text="{} {} {}".format(num1, op, num2))
+        print(num1, op, num2)
     
     # function that checks the user's answer
 
@@ -179,7 +178,7 @@ class Quiz:
             correct_answer = num1 + num2
         elif op == '-':
             correct_answer = num1 - num2
-        elif op == '*':
+        else:
             correct_answer = num1 * num2 
         # else:
         #     num1 = num1 / num2
