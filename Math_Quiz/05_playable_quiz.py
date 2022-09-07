@@ -174,7 +174,7 @@ class Quiz:
     
     # function that checks the user's answer
 
-    def check_answer(self, num1, op, num2):
+    def check_answer(self, num1, op, num2, quest_num):
         print(num1, op, num2)
         given_answer = int(self.answer_entry.get())
         if op == '+':
@@ -189,8 +189,10 @@ class Quiz:
         #     num1 = num1 / num2
         if given_answer == correct_answer:
             self.marking_box.config(text="correct")
+            quest_num + 1
         else:
             self.marking_box.config(text="incorrect")
+            quest_num + 1
         self.answer_entry.delete(0, END)
         self.next_button.config(state=NORMAL)
         self.submit_button.config(state=DISABLED)
