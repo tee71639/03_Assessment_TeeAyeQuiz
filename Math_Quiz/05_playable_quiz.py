@@ -121,7 +121,6 @@ class Quiz:
         # question number
         self.question_header = Label(self.quiz_frame, text="question {}:".format(quest_num), font='arial 18 bold', justify=CENTER)
         self.question_header.grid(row=0, pady=20)
-
               
         # box that displays question
         self.question_box = Label(self.quiz_frame, text="", font="arial 16", justify=CENTER, bg="grey")
@@ -144,6 +143,8 @@ class Quiz:
         self.submit_button = Button(self.answer_frame, font="Arial 14 bold", text="submit", command= lambda:self.check_answer(num1, op, num2))
         self.submit_button.grid(row=1, column=1)
 
+        self.next_button = Button(self.answer_frame, font="Arial 14 bold", text="next question", command= lambda:self.question_difficulty(difficulty))
+        self.next_button.grid(row=2, padx=10, pady=10)
         self.question_difficulty(difficulty)
 
     # difficulty functions
@@ -165,32 +166,38 @@ class Quiz:
             op = random.choice(ops)
             num1 = random.randint(50, 500)
             num2 = random.randint(50, 500)
-
+            
         self.question_box.config(text="{} {} {}".format(num1, op, num2))
         print(num1, op, num2)
+        self.submit_button.config(state=NORMAL)
+        self.next_button.config(state=DISABLED)
     
     # function that checks the user's answer
 
     def check_answer(self, num1, op, num2):
         print(num1, op, num2)
-        given_answer = self.answer_entry.get()
+        given_answer = int(self.answer_entry.get())
         if op == '+':
             correct_answer = num1 + num2
         elif op == '-':
             correct_answer = num1 - num2
         else:
             correct_answer = num1 * num2 
+        print(correct_answer)
+        print(given_answer)
         # else:
         #     num1 = num1 / num2
         if given_answer == correct_answer:
             self.marking_box.config(text="correct")
-        else:
+        if given_answer != correct_answer:
             self.marking_box.config(text="incorrect")
-       
+        else:
+            self.marking_box.config(text="not a valid answer")
+        self.answer_entry.delete(0, END)
+        self.next_button.config(state=NORMAL)
+        self.submit_button.config(state=DISABLED)
         # hide start up window
         root.withdraw()
-
-      
 
 
 
