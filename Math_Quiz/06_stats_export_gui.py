@@ -143,9 +143,13 @@ class Quiz:
         self.submit_button = Button(self.answer_frame, font="Arial 14 bold", text="submit", command= lambda:self.check_answer(num1, op, num2))
         self.submit_button.grid(row=1, column=1)
 
-        self.next_button = Button(self.answer_frame, font="Arial 14 bold", text="next question", command= lambda:self.question_difficulty(difficulty))
-        self.next_button.grid(row=2, padx=10, pady=10)
+        self.stats_button = Button(self.answer_frame, font="Arial 14 bold", text="stats", justify=LEFT)
+        self.stats_button.grid(row=2, column=0, padx=10, pady=5)
+
+        self.next_button = Button(self.answer_frame, font="Arial 14 bold", text="next", justify=RIGHT, command=lambda:self.question_difficulty(difficulty))
+        self.next_button.grid(row=2, column=1, padx=10, pady=5)
         self.question_difficulty(difficulty)
+
 
     # difficulty functions
 
