@@ -201,6 +201,10 @@ class Quiz:
         # hide start up window
         root.withdraw()
 
+    # stats and export function
+
+    
+
 
 
 

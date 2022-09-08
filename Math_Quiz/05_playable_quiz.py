@@ -6,6 +6,7 @@ import operator
 num1 = 0
 num2 = 0
 op = ""
+quest_num = 0
 
 
 class Start:
@@ -109,9 +110,6 @@ class Quiz:
         # initialize variables
         self.answer = IntVar()
         self.answer.set(0)
-        
-        # take count of the number of questions
-        quest_num = 1
 
         # quiz gui
         self.quiz = Toplevel()
@@ -119,7 +117,7 @@ class Quiz:
         self.quiz_frame.grid()
 
         # question number
-        self.question_header = Label(self.quiz_frame, text="question {}:".format(quest_num), font='arial 18 bold', justify=CENTER)
+        self.question_header = Label(self.quiz_frame, text="question 1", font='arial 18 bold', justify=CENTER)
         self.question_header.grid(row=0, pady=20)
               
         # box that displays question
@@ -150,7 +148,7 @@ class Quiz:
     # difficulty functions
 
     def question_difficulty(self, difficulty):
-        global num1, op, num2
+        global num1, op, num2, quest_num
         if difficulty == "easy":
             ops = ['+', '-']
             op = random.choice(ops)
@@ -168,34 +166,44 @@ class Quiz:
             num2 = random.randint(50, 500)
             
         self.question_box.config(text="{} {} {}".format(num1, op, num2))
+        quest_num += 1
+        self.question_header.config(text="question {}".format(quest_num))
         print(num1, op, num2)
+        # make it so user can submit and cant click next question
         self.submit_button.config(state=NORMAL)
         self.next_button.config(state=DISABLED)
+        self.answer_entry.config(state=NORMAL)
     
     # function that checks the user's answer
 
-    def check_answer(self, num1, op, num2, quest_num):
+    def check_answer(self, num1, op, num2):
         print(num1, op, num2)
         given_answer = int(self.answer_entry.get())
         if op == '+':
             correct_answer = num1 + num2
         elif op == '-':
             correct_answer = num1 - num2
-        else:
+        elif op == '*':
             correct_answer = num1 * num2 
+        else:
+            num1 = num1 * num2
+            correct_answer = num1 / num2
         print(correct_answer)
         print(given_answer)
-        # else:
-        #     num1 = num1 / num2
         if given_answer == correct_answer:
             self.marking_box.config(text="correct")
-            quest_num + 1
         else:
             self.marking_box.config(text="incorrect")
-            quest_num + 1
         self.answer_entry.delete(0, END)
+        # make it so user can't submit and can only go next question
         self.next_button.config(state=NORMAL)
         self.submit_button.config(state=DISABLED)
+        self.answer_entry.config(state=DISABLED)
+        if quest_num == 10:
+            self.marking_box.config(text="quiz over!")
+            self.next_button.config(state=DISABLED)
+            self.submit_button.config(state=DISABLED)
+            self.answer_entry.config(state=DISABLED)
         # hide start up window
         root.withdraw()
 
