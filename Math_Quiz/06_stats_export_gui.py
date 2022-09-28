@@ -109,9 +109,6 @@ class Quiz:
         # initialize variables
         self.answer = IntVar()
         self.answer.set(0)
-        
-        # take count of the number of questions
-        quest_num = 1
 
         # quiz gui
         self.quiz = Toplevel()
@@ -143,8 +140,8 @@ class Quiz:
         self.submit_button = Button(self.answer_frame, font="Arial 14 bold", text="submit", command= lambda:self.check_answer(num1, op, num2))
         self.submit_button.grid(row=1, column=1)
 
-        self.stats_button = Button(self.answer_frame, font="Arial 14 bold", text="stats", justify=LEFT)
-        self.stats_button.grid(row=2, column=0, padx=10, pady=5)
+        self.stats_button = Button(self.answer_frame, font="Arial 14 bold", text="stats", command=lambda:self.to_stats())
+        self.stats_button.grid(row=2, column=0)
 
         self.next_button = Button(self.answer_frame, font="Arial 14 bold", text="next", justify=RIGHT, command=lambda:self.question_difficulty(difficulty))
         self.next_button.grid(row=2, column=1, padx=10, pady=5)
@@ -173,48 +170,102 @@ class Quiz:
             
         self.question_box.config(text="{} {} {}".format(num1, op, num2))
         quest_num += 1
-        self.question_header.config(text="question {}".format(quest_num))
+        self.question_header.config(text="question {}:".format(quest_num))
         print(num1, op, num2)
-        # make it so user can submit and cant click next question
+        # make it so user can't click next and can only submit answer
         self.submit_button.config(state=NORMAL)
         self.next_button.config(state=DISABLED)
         self.answer_entry.config(state=NORMAL)
+        self.stats_button.config(state=DISABLED)
+
     
     # function that checks the user's answer
 
     def check_answer(self, num1, op, num2):
-        print(num1, op, num2)
-        given_answer = int(self.answer_entry.get())
-        if op == '+':
-            correct_answer = num1 + num2
-        elif op == '-':
-            correct_answer = num1 - num2
-        elif op == '*':
-            correct_answer = num1 * num2 
-        else:
-            num1 = num1 * num2
-            correct_answer = num1 / num2
-        print(correct_answer)
-        print(given_answer)
-        if given_answer == correct_answer:
-            self.marking_box.config(text="correct")
-        else:
-            self.marking_box.config(text="incorrect")
-        self.answer_entry.delete(0, END)
-        # make it so user can't submit and can only go next question
-        self.next_button.config(state=NORMAL)
-        self.submit_button.config(state=DISABLED)
-        self.answer_entry.config(state=DISABLED)
-        if quest_num == 10:
-            self.marking_box.config(text="quiz over!")
-            self.next_button.config(state=DISABLED)
-            self.submit_button.config(state=DISABLED)
+            print(num1, op, num2)
+            given_answer = int(self.answer_entry.get())
+            if op == '+':
+                correct_answer = num1 + num2
+            elif op == '-':
+                correct_answer = num1 - num2
+            else:
+                correct_answer = num1 * num2 
+            print(correct_answer)
+            print(given_answer)
+            # else:
+            #     num1 = num1 / num2
+            if given_answer == correct_answer:
+                self.marking_box.config(text="correct")
+            else:
+                self.marking_box.config(text="incorrect")
+            # make it so user can't submit and only goto next question
+            self.answer_entry.delete(0, END)
             self.answer_entry.config(state=DISABLED)
-        # hide start up window
-        root.withdraw()
+            self.next_button.config(state=NORMAL)
+            self.submit_button.config(state=DISABLED)
+            # end quiz once 10 questions have been answered
+            if quest_num == 10:
+                self.question_header.config(text="quiz finished! check your results")
+                self.answer_entry.config(state=DISABLED)
+                self.submit_button.config(state=DISABLED)
+                self.next_button.config(state=DISABLED)
+                self.stats_button.config(state=NORMAL)
+            # hide start up window
+            root.withdraw()
+
+
     # stats and export function
 
-    
+    def to_stats(self):
+        QuizStats(self)
+
+
+
+class QuizStats:
+    def __init__(self, partner):
+        
+        # disable help button
+        partner.stats_button.config(state=DISABLED)
+
+        heading = "Arial 12 bold"
+        content = "Arial 12"
+
+        # sets up child window (ie: help box)
+        self.stats_box = Toplevel()
+
+        # if users press cross at top, closes help and 'releases' help button
+
+        self.stats_box.protocol('WM_DELETE_WINDOW', partial(self.close_stats, partner))
+
+        # set up gui frame
+        self.stats_frame = Frame(self.stats_box)
+        self.stats_frame.grid()
+
+        # set up help heading (row 0)
+        self.stats_heading_label = Label(self.stats_frame, text="your statistics", font="arial 19 bold")
+        self.stats_heading_label.grid(row=0)
+
+        # to export <instuctions> (row 1)
+        self.export_instructions = Label(self.stats_frame, text="here are your quiz statistics. use the export button to access your results and see which questions you answered right or wrong", wrap=250, font="arial 10 italic", justify=LEFT, fg="green", padx=10, pady=10)
+        self.export_instructions.grid(row=1)
+
+        self.details_frame = Frame(self.stats_frame)
+        self.details_frame.grid(row=2)
+
+        # export and dismiss buttons
+        self.buttons_frame = Frame(self.stats_frame)
+        self.buttons_frame.grid(row=3)
+
+        self.export_button = Button(self.buttons_frame, text="export", font="arial 16 bold", fg="white", bg="#2b4680", command=partial(lambda: self.to_export(partner)))
+        self.export_button.grid(row=0, column=0, padx=5, pady=10)
+
+        self.dismiss_button = Button(self.buttons_frame, text="dismiss", font="arial 16 bold", fg="white", bg="#660000", command=partial(self.close_stats, partner))
+        self.dismiss_button.grid(row=0, column=1, padx=5, pady=10)
+
+    def close_stats(self, partner):
+        self.stats_box.destroy()
+        partner.stats_button.config(state=NORMAL)
+
 
 
 
