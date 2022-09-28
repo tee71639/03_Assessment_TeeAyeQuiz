@@ -6,7 +6,7 @@ import operator
 num1 = 0
 num2 = 0
 op = ""
-
+quest_num = 0
 
 class Start:
     def __init__(self, parent):
@@ -154,7 +154,7 @@ class Quiz:
     # difficulty functions
 
     def question_difficulty(self, difficulty):
-        global num1, op, num2
+        global num1, op, num2, quest_num
         if difficulty == "easy":
             ops = ['+', '-']
             op = random.choice(ops)
@@ -172,9 +172,13 @@ class Quiz:
             num2 = random.randint(50, 500)
             
         self.question_box.config(text="{} {} {}".format(num1, op, num2))
+        quest_num += 1
+        self.question_header.config(text="question {}".format(quest_num))
         print(num1, op, num2)
+        # make it so user can submit and cant click next question
         self.submit_button.config(state=NORMAL)
         self.next_button.config(state=DISABLED)
+        self.answer_entry.config(state=NORMAL)
     
     # function that checks the user's answer
 
@@ -185,22 +189,29 @@ class Quiz:
             correct_answer = num1 + num2
         elif op == '-':
             correct_answer = num1 - num2
-        else:
+        elif op == '*':
             correct_answer = num1 * num2 
+        else:
+            num1 = num1 * num2
+            correct_answer = num1 / num2
         print(correct_answer)
         print(given_answer)
-        # else:
-        #     num1 = num1 / num2
         if given_answer == correct_answer:
             self.marking_box.config(text="correct")
         else:
             self.marking_box.config(text="incorrect")
         self.answer_entry.delete(0, END)
+        # make it so user can't submit and can only go next question
         self.next_button.config(state=NORMAL)
         self.submit_button.config(state=DISABLED)
+        self.answer_entry.config(state=DISABLED)
+        if quest_num == 10:
+            self.marking_box.config(text="quiz over!")
+            self.next_button.config(state=DISABLED)
+            self.submit_button.config(state=DISABLED)
+            self.answer_entry.config(state=DISABLED)
         # hide start up window
         root.withdraw()
-
     # stats and export function
 
     
