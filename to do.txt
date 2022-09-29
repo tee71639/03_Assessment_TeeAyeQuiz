@@ -1,0 +1,18 @@
+Are we there yet> <you can talk to me>
+You don't have to do stats and export to pass.  If you have a GUI and classes, that is enough for A :)
+
+It would be better to have error checking...
+
+Let me take a look at what you have...
+
+Ok - so the quiz basically works which is great. 
+
+Here's what I'd like to see
+- some indication of how many I've got right / wrong.  eg: correct (2/2), incorrect (2/3)
+- When we get to 10 questions, the 'next' label could change to 'quiz over' (that's an easy 'config' thing)
+- If we get it wrong, can you change the background to pink?  If it's right can it change to green?  That would look nice and we did something like that in mystery box
+- No letters!
+- fix division.   Here's a hint, 2 x 3 = 6  We can say 6 / 2 = 3 or 6/ 3 = 2.  So if we generate the numbers 2 and 3, we can generate a division question involving 6.  Easy'ish code.
+What does your documentation loolk like? be brave
+You need to document as you go.  I need test plans and screenshots for A.  I also need to see if youi tried different options.  eg for division, you first tried stuff like 25/2, then we realised there was a better way.  That's gold slide territory right there.
+YOu can do this!!
