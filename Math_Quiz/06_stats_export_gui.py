@@ -1,3 +1,4 @@
+from multiprocessing.sharedctypes import Value
 from tkinter import *
 from functools import partial # to prevent unwanted windows
 import random
@@ -8,6 +9,7 @@ num2 = 0
 op = ""
 quest_num = 0
 right = 0
+num3 = 0
 
 class Start:
     def __init__(self, parent):
@@ -91,7 +93,7 @@ class Support:
         self.difficulties_text = Label(self.difficulty_frame, text="difficulties:", font="arial 12 bold", bg="#d1d1d1")
         self.difficulties_text.grid(row=0, pady=10)
 
-        self.difficulty_examples = Label(self.difficulty_frame, text="easy: addition and subtraction, digits will always be from 1 to 15 (e.g. 7 + 4, 14 - 8).\n\nmedium: addition, subtraction, multiplication and divison. addition and subtraction \ndigits will always be from 1 to 50 (e.g. 34 +12, 34 - 19). multiplication and division digits \nwill always be from 1 to 12 (e.g. 8 x 3, 6 / 2).\n\nhard: multiplication and division only. multiplication digits will always be from  50 to \n500 (e.g. 174 x 411). divison digits will always be from 1 to 200 (e.g. 196 / 28).\n\nyou'll be given 10 questions. good luck", bg="#d1d1d1")
+        self.difficulty_examples = Label(self.difficulty_frame, text="easy: addition and subtraction, digits will always be from 1 to 10 (e.g., 7 + 4, 9 - 8).\n\nmedium: addition, subtraction, and multiplication. digits will always be from 1 to 20 (e.g., 14 + 12, 8 - 19).\n\nhard: multiplication and division only. digits will always be from 10 to 30 (e.g., 23 * 15, 30 / 6).\n\nyou'll be given 10 questions. good luck", bg="#d1d1d1")
         self.difficulty_examples.grid(row=1, pady=20)
 
         # dismiss button (row 3)
@@ -138,7 +140,7 @@ class Quiz:
         self.answer_entry = Entry(self.answer_frame, font="Arial 19 bold")
         self.answer_entry.grid(row=1, column=0)
 
-        self.submit_button = Button(self.answer_frame, font="Arial 14 bold", text="submit", command= lambda:self.check_answer(num1, op, num2))
+        self.submit_button = Button(self.answer_frame, font="Arial 14 bold", text="submit", command= lambda:self.check_answer(num1, op, num2, num3))
         self.submit_button.grid(row=1, column=1)
 
         self.next_button = Button(self.answer_frame, font="Arial 14 bold", text="next", justify=RIGHT, command=lambda:self.question_difficulty(difficulty))
@@ -149,68 +151,94 @@ class Quiz:
     # difficulty functions
 
     def question_difficulty(self, difficulty):
-        global num1, op, num2, quest_num
+        global num1, op, num2, quest_num, num3
         if difficulty == "easy":
             ops = ['+', '-']
             op = random.choice(ops)
-            num1 = random.randint(0, 15)
-            num2 = random.randint(0, 15)
+            num1 = random.randint(1, 10)
+            num2 = random.randint(0, 10)
         elif difficulty == "normal":
-            ops = ['+', '-', '*', '/']
+            ops = ['+', '-', '*']
             op = random.choice(ops)
-            num1 = random.randint(1, 50)
-            num2 = random.randint(1, 50)    # to avoid division by 0
+            num1 = random.randint(1, 20)
+            num2 = random.randint(1, 20)    # to avoid division by 0
         else:
-            ops = ['+', '-', '*', '/']
+            ops = ['*', '/']
             op = random.choice(ops)
-            num1 = random.randint(50, 500)
-            num2 = random.randint(50, 500)
-            
-        self.question_box.config(text="{} {} {}".format(num1, op, num2))
-        quest_num += 1
-        self.question_header.config(text="question {}:".format(quest_num))
-        print(num1, op, num2)
+            num1 = random.randint(10, 20)
+            num2 = random.randint(10, 50)
+            num3 = num1 * num2
+        
+        if op == '+':
+            self.question_box.config(text="{} {} {}".format(num1, op, num2))
+            quest_num += 1
+            self.question_header.config(text="question {}:".format(quest_num))
+            print(num1, op, num2)
+        elif op == '-':
+            self.question_box.config(text="{} {} {}".format(num1, op, num2))
+            quest_num += 1
+            self.question_header.config(text="question {}:".format(quest_num))
+            print(num1, op, num2)
+        elif op == '*':
+            self.question_box.config(text="{} {} {}".format(num1, op, num2))
+            quest_num += 1
+            self.question_header.config(text="question {}:".format(quest_num))
+            print(num1, op, num2)
+        else:
+            self.question_box.config(text="{} {} {}".format(num3, op, num2))
+            quest_num += 1
+            self.question_header.config(text="question {}:".format(quest_num))
+            print(num3, op, num2)
         # make it so user can't click next and can only submit answer
         self.submit_button.config(state=NORMAL)
         self.next_button.config(state=DISABLED)
         self.answer_entry.config(state=NORMAL)
+        self.marking_box.config(text="")
 
     
     # function that checks the user's answer
 
-    def check_answer(self, num1, op, num2):
+    def check_answer(self, num1, op, num2, num3):
             global right
-            print(num1, op, num2)
+            # set error background colors (and assume that there are no errors 
+            # at the start)
+            error_back = "#ffafaf"
+            print(num1, op, num2, num3)
             given_answer = int(self.answer_entry.get())
             if op == '+':
                 correct_answer = num1 + num2
             elif op == '-':
                 correct_answer = num1 - num2
-            else:
+            elif op == '*':
                 correct_answer = num1 * num2 
+            else:
+                correct_answer = num3 / num2
             print(correct_answer)
             print(given_answer)
-            # else:
-            #     num1 = num1 / num2
-            if given_answer == correct_answer:
-                self.marking_box.config(text="correct")
-                right += 1
-            else:
-                self.marking_box.config(text="incorrect")
-            # make it so user can't submit and only goto next question
-            self.answer_entry.delete(0, END)
-            self.answer_entry.config(state=DISABLED)
-            self.next_button.config(state=NORMAL)
-            self.submit_button.config(state=DISABLED)
-            # end quiz once 10 questions have been answered
-            if quest_num == 10:
-                self.question_header.config(text="you got {} out of 10 right!".format(right))
-                self.next_button.config(text="quiz over!")
+            try:
+                if given_answer == correct_answer:
+                    self.marking_box.config(text="correct")
+                    right += 1
+                else:
+                    self.marking_box.config(text="incorrect")
+                # make it so user can't submit and only goto next question
+                self.answer_entry.delete(0, END)
                 self.answer_entry.config(state=DISABLED)
+                self.next_button.config(state=NORMAL)
                 self.submit_button.config(state=DISABLED)
-                self.next_button.config(state=DISABLED)
-            # hide start up window
-            root.withdraw()
+                # end quiz once 10 questions have been answered
+                if quest_num == 10:
+                    self.question_header.config(text="you got {} out of 10 right!".format(right))
+                    self.next_button.config(text="quiz over!")
+                    self.answer_entry.config(state=DISABLED)
+                    self.submit_button.config(state=DISABLED)
+                    self.next_button.config(state=DISABLED)
+            except ValueError:
+                self.marking_box.config(text="put an answer that makes sense.")
+
+
+                # hide start up window
+                root.withdraw()
 
 
 

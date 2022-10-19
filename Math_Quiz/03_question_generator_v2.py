@@ -8,7 +8,7 @@ def randomCalc():
                      '*':operator.mul,
                      '/':operator.truediv}
               num1 = random.randint(0,12)
-              num2 = random.randint(1,10)   # don't sample 0's to protect against divide-by-zero
+              num2 = random.randint(1,12)   # don't sample 0's to protect against divide-by-zero
               op = random.choice(list(ops.keys()))
               answer = ops.get(op)(num1,num2)
               question = int(input('What is {} {} {}?\n'.format(num1, op, num2)))
