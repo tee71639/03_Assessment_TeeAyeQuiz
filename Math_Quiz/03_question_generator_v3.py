@@ -3,9 +3,6 @@ import operator
 
 
 def randomCalc():
-       print('Welcome. This is a 10 question math quiz\n')
-       name = input("Please enter your name ")
-       print("Hello", name,"Let's begin the quiz!")
        score = 0
        for i in range(0, 10):
               ops = {'+':operator.add,

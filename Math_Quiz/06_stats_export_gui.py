@@ -202,9 +202,10 @@ class Quiz:
             global right
             # set error background colors (and assume that there are no errors 
             # at the start)
+            has_errors = "no"
             error_back = "#ffafaf"
             print(num1, op, num2, num3)
-            given_answer = int(self.answer_entry.get())
+
             if op == '+':
                 correct_answer = num1 + num2
             elif op == '-':
@@ -213,9 +214,9 @@ class Quiz:
                 correct_answer = num1 * num2 
             else:
                 correct_answer = num3 / num2
-            print(correct_answer)
-            print(given_answer)
+            # answer maker and score counter
             try:
+                given_answer = int(self.answer_entry.get())
                 if given_answer == correct_answer:
                     self.marking_box.config(text="correct")
                     right += 1
@@ -226,6 +227,7 @@ class Quiz:
                 self.answer_entry.config(state=DISABLED)
                 self.next_button.config(state=NORMAL)
                 self.submit_button.config(state=DISABLED)
+                self.answer_entry.config(bg="#FFFFFF")
                 # end quiz once 10 questions have been answered
                 if quest_num == 10:
                     self.question_header.config(text="you got {} out of 10 right!".format(right))
@@ -233,8 +235,11 @@ class Quiz:
                     self.answer_entry.config(state=DISABLED)
                     self.submit_button.config(state=DISABLED)
                     self.next_button.config(state=DISABLED)
+            # if the user inputs an invalid answer, tell them to retry
             except ValueError:
+                self.answer_entry.config(bg=error_back)
                 self.marking_box.config(text="put an answer that makes sense.")
+
 
 
                 # hide start up window
