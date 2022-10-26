@@ -1,11 +1,10 @@
 import random
 import operator
 
+# Division only experiment...
 def randomCalc():
        for i in range(0, 15):
-              ops = {'+':operator.add,
-                     '-':operator.sub,
-                     '*':operator.mul,
+              ops = {
                      '/':operator.truediv}
               num1 = random.randint(0,12)
               num2 = random.randint(1,12)   # don't sample 0's to protect against divide-by-zero

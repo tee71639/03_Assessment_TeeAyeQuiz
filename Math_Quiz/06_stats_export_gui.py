@@ -1,4 +1,4 @@
-from multiprocessing.sharedctypes import Value
+from distutils.log import error
 from tkinter import *
 from functools import partial # to prevent unwanted windows
 import random
@@ -194,6 +194,7 @@ class Quiz:
         self.next_button.config(state=DISABLED)
         self.answer_entry.config(state=NORMAL)
         self.marking_box.config(text="")
+        self.marking_box.config(fg="#000000")
 
     
     # function that checks the user's answer
@@ -202,7 +203,6 @@ class Quiz:
             global right
             # set error background colors (and assume that there are no errors 
             # at the start)
-            has_errors = "no"
             error_back = "#ffafaf"
             print(num1, op, num2, num3)
 
@@ -218,10 +218,10 @@ class Quiz:
             try:
                 given_answer = int(self.answer_entry.get())
                 if given_answer == correct_answer:
-                    self.marking_box.config(text="correct")
+                    self.marking_box.config(text="correct", fg="#41c462")
                     right += 1
                 else:
-                    self.marking_box.config(text="incorrect")
+                    self.marking_box.config(text="incorrect", fg="#bd1919")
                 # make it so user can't submit and only goto next question
                 self.answer_entry.delete(0, END)
                 self.answer_entry.config(state=DISABLED)
